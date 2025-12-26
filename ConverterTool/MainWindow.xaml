@@ -1,0 +1,179 @@
+<Window x:Class="ConverterTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="DIAL Image Converter"
+        Height="720"
+        Width="1100"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI">
+    <Window.Resources>
+        <LinearGradientBrush x:Key="AnimatedGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0A0A0A" Offset="0.0" x:Name="StartStop"/>
+            <GradientStop Color="#141414" Offset="0.5" x:Name="MidStop"/>
+            <GradientStop Color="#1F1F1F" Offset="1.0" x:Name="EndStop"/>
+        </LinearGradientBrush>
+
+        <Storyboard x:Key="GradientShift" RepeatBehavior="Forever" AutoReverse="True">
+            <ColorAnimation Storyboard.TargetName="StartStop" Storyboard.TargetProperty="Color"
+                            From="#0A0A0A" To="#0F0F0F" Duration="0:0:4"/>
+            <ColorAnimation Storyboard.TargetName="MidStop" Storyboard.TargetProperty="Color"
+                            From="#141414" To="#1A1A1A" Duration="0:0:4"/>
+            <ColorAnimation Storyboard.TargetName="EndStop" Storyboard.TargetProperty="Color"
+                            From="#1F1F1F" To="#292929" Duration="0:0:4"/>
+        </Storyboard>
+
+        <DropShadowEffect x:Key="CardShadow" Color="#000000" BlurRadius="18" ShadowDepth="4" Opacity="0.55"/>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard Storyboard="{StaticResource GradientShift}"/>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid Background="{StaticResource AnimatedGradient}" Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Padding="20" Background="#0F0F0F" BorderBrush="#2F2F2F" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                <Ellipse Width="44" Height="44" Fill="#2F2F2F" Stroke="#3A3A3A" StrokeThickness="2">
+                    <Ellipse.Effect>
+                        <DropShadowEffect Color="#000000" BlurRadius="12" ShadowDepth="0" Opacity="0.7"/>
+                    </Ellipse.Effect>
+                </Ellipse>
+                <StackPanel Margin="12,0,0,0">
+                    <TextBlock Text="DIAL Image Converter" FontSize="22" FontWeight="SemiBold" Foreground="White"/>
+                    <TextBlock Text="Drag &amp; drop. Convert. Preview. Share as Base64." FontSize="12" Foreground="#DADADA"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Background="#1A1A1A" Padding="20" CornerRadius="16" Effect="{StaticResource CardShadow}">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2E2E2E" Offset="0"/>
+                        <GradientStop Color="#3A3A3A" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Border.BorderThickness>1</Border.BorderThickness>
+
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Konvertierung" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Text="Ziehe Bilder hierher oder klicke, um Dateien auszuwählen. Wähle das Zielformat und lege optional einen Ausgabeordner fest."
+                               TextWrapping="Wrap" Foreground="#DADADA" FontSize="12"/>
+
+                    <Border x:Name="DropZone"
+                            Height="230"
+                            BorderThickness="2"
+                            CornerRadius="12"
+                            Background="#111111"
+                            BorderBrush="#3A3A3A"
+                            AllowDrop="True"
+                            MouseLeftButtonUp="OpenFilePicker_Click"
+                            DragEnter="DropZone_DragEnter"
+                            DragLeave="DropZone_DragLeave"
+                            Drop="DropZone_Drop">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Opacity" Value="0.92"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Opacity" Value="1"/>
+                                        <Setter Property="BorderBrush" Value="#5A5A5A"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="Drag &amp; Drop" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="oder klicken um Bilder zu wählen" Foreground="#DADADA" FontSize="12" HorizontalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0" Spacing="8">
+                                <TextBlock Text="Zielformat:" Foreground="#DADADA" FontSize="12"/>
+                                <ComboBox x:Name="FormatCombo"
+                                          Width="140"
+                                          ItemsSource="{Binding TargetFormats}"
+                                          SelectedItem="{Binding SelectedFormat}"
+                                          Foreground="White"
+                                          Background="#1F1F1F"
+                                          BorderBrush="#3A3A3A"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                        <TextBlock Text="Ausgabeordner" Foreground="#DADADA" VerticalAlignment="Center"/>
+                        <TextBox Width="300" Text="{Binding OutputDirectory, UpdateSourceTrigger=PropertyChanged}" Background="#1F1F1F" Foreground="White" BorderBrush="#3A3A3A"/>
+                        <Button Content="Durchsuchen" Click="Browse_Click" Background="#2E2E2E" Foreground="White" BorderBrush="#3A3A3A"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Margin="18,0,0,0" Background="#1A1A1A" Padding="20" CornerRadius="16" Effect="{StaticResource CardShadow}">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2E2E2E" Offset="0"/>
+                        <GradientStop Color="#3A3A3A" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Border.BorderThickness>1</Border.BorderThickness>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0">
+                        <TextBlock Text="Konvertierungen" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                        <Border Background="#111111" CornerRadius="8" Padding="10,4" Margin="12,0,0,0">
+                            <TextBlock Text="{Binding ConversionHistory.Count, StringFormat='{}{0} Dateien'}" Foreground="#DADADA"/>
+                        </Border>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" Margin="0,12,0,0">
+                        <ItemsControl ItemsSource="{Binding ConversionHistory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:ConvertedItem}" xmlns:models="clr-namespace:ConverterTool.Models">
+                                    <Border Margin="0,0,0,12" Padding="10" Background="#111111" CornerRadius="10" BorderBrush="#3A3A3A" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Width="84" Height="84" Background="#1F1F1F" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Image Source="{Binding Preview}" Stretch="UniformToFill" ClipToBounds="True"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                                <TextBlock Text="{Binding OriginalName}" Foreground="White" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding ConvertedAt, StringFormat='{}{0:HH:mm:ss}'}" Foreground="#E0E0E0" FontSize="11"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,6,0,0">
+                                                    <Border Background="#2E2E2E" Padding="8,4" CornerRadius="6">
+                                                        <TextBlock Text="{Binding OriginalFormat, StringFormat='von {0}'}" Foreground="White" FontSize="11"/>
+                                                    </Border>
+                                                    <Border Background="#3A3A3A" Padding="8,4" CornerRadius="6">
+                                                        <TextBlock Text="{Binding TargetFormat, StringFormat='zu {0}'}" Foreground="White" FontSize="11"/>
+                                                    </Border>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding OutputPath}" Foreground="#DADADA" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
