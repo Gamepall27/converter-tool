@@ -1,0 +1,198 @@
+<Window x:Class="ConverterTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="DIAL Converter" Height="760" Width="1180" MinHeight="650" MinWidth="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackground}">
+    <Window.Resources>
+        <DropShadowEffect x:Key="CardShadow" Color="#33000000" BlurRadius="16" ShadowDepth="2" />
+    </Window.Resources>
+
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border CornerRadius="16" Padding="18" BorderBrush="#33FFFFFF" BorderThickness="1" Background="#0CFFFFFF" Effect="{StaticResource CardShadow}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Ellipse Width="40" Height="40" Fill="{StaticResource AppBackground}" Stroke="#44FFFFFF" StrokeThickness="1.5" Margin="0,0,14,0">
+                    <Ellipse.Effect>
+                        <DropShadowEffect Color="#9900B5E2" BlurRadius="14" ShadowDepth="0" />
+                    </Ellipse.Effect>
+                </Ellipse>
+                <StackPanel>
+                    <TextBlock Text="DIAL Bild-Konverter" FontSize="22" FontWeight="Bold" />
+                    <TextBlock Text="Drag & Drop, Multi-Format & Base64 – alles in einem Tool" Foreground="#CCFFFFFF" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <TabControl Grid.Row="1" Margin="0,18,0,0" Background="#0DFFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1" Padding="10" Effect="{StaticResource CardShadow}">
+            <TabItem Header="Konvertieren">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="4*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Margin="8">
+                        <Border x:Name="DropZone" AllowDrop="True" BorderBrush="#55FFFFFF" BorderThickness="2" CornerRadius="14" Background="#11FFFFFF"
+                                Padding="26" Margin="0,0,0,12" Drop="DropZone_Drop" DragEnter="DropZone_DragEnter" DragLeave="DropZone_DragLeave" MouseEnter="DropZone_MouseEnter" MouseLeave="DropZone_MouseLeave">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </Border.RenderTransform>
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="Dateien hier ablegen" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                                <TextBlock Text="Unterstützt: PNG, JPG, BMP, GIF, TIFF" Foreground="#CCFFFFFF" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                                <Border Width="200" Height="4" CornerRadius="2" Background="#22FFFFFF">
+                                    <Border.Triggers>
+                                        <EventTrigger RoutedEvent="Loaded">
+                                            <BeginStoryboard>
+                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.3" To="1" Duration="0:0:1.8" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </EventTrigger>
+                                    </Border.Triggers>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel>
+                            <TextBlock Text="Ziel-Format" FontWeight="SemiBold" />
+                            <ComboBox ItemsSource="{Binding SupportedFormats}" SelectedItem="{Binding SelectedFormat}" Width="190" Margin="0,4,0,0" />
+
+                            <CheckBox Content="Base64 zusätzlich erzeugen" IsChecked="{Binding CreateBase64}" Margin="0,12,0,0" />
+                            <CheckBox Content="Original behalten" IsChecked="{Binding PreserveOriginal}" />
+
+                            <Button Content="Konvertieren starten" Click="ManualConvert_Click" Width="190" />
+
+                            <StackPanel Orientation="Horizontal" Margin="0,14,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Ablage" FontWeight="SemiBold" />
+                                <Border Background="#22FFFFFF" CornerRadius="6" Padding="6,3" Margin="8,0,0,0">
+                                    <TextBlock Text="{Binding OutputFolder}" FontSize="12" Foreground="#CCFFFFFF" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="Alle Dateien landen im Ordner \"Converted\" neben der App." Foreground="#CCFFFFFF" FontSize="12" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Grid Grid.Column="1" Margin="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="3*" />
+                        </Grid.RowDefinitions>
+
+                        <Border CornerRadius="12" Padding="12" Background="#12FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="3*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Background="#11FFFFFF" CornerRadius="10" Padding="10" Margin="0,0,12,0" BorderBrush="#22FFFFFF" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="Letzte Vorschau" FontWeight="SemiBold" />
+                                        <Border Height="200" Background="#08FFFFFF" CornerRadius="8" BorderBrush="#22FFFFFF" BorderThickness="1" Margin="0,8,0,0">
+                                            <Image Source="{Binding SelectedConversion.Preview}" Stretch="Uniform" />
+                                        </Border>
+                                        <TextBlock Text="{Binding SelectedConversion.Status}" Foreground="#CCFFFFFF" />
+                                    </StackPanel>
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Verlauf" FontWeight="SemiBold" />
+                                    <ListView ItemsSource="{Binding Conversions}" SelectedItem="{Binding SelectedConversion}" Margin="0,8,0,0" Background="#11FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Margin="0,4" Padding="8" CornerRadius="10" Background="#0FFFFFFF">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Width="52" Height="52" CornerRadius="8" Background="#11FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1" Margin="0,0,10,0">
+                                                            <Image Source="{Binding Preview}" Stretch="UniformToFill" />
+                                                        </Border>
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" />
+                                                            <TextBlock Text="{Binding ConversionLabel}" FontSize="12" Foreground="#CCFFFFFF" />
+                                                            <TextBlock Text="{Binding TargetPath}" FontSize="11" Foreground="#99FFFFFF" TextTrimming="CharacterEllipsis" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="1" CornerRadius="12" Padding="12" Background="#12FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1" Margin="0,10,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="3*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Base64 Ausgabe" FontWeight="SemiBold" />
+                                    <TextBox Text="{Binding Base64Output}" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Height="160" Margin="0,6,0,0" Background="#0EFFFFFF" Foreground="White" BorderBrush="#22FFFFFF" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="In Zwischenablage" Click="CopyBase64_Click" />
+                                        <Button Content="Als Datei speichern" Click="SaveBase64_Click" Margin="8,0,0,0" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Status" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding StatusMessage}" Margin="0,6,0,0" Foreground="#CCFFFFFF" TextWrapping="Wrap" />
+                                    <ProgressBar Minimum="0" Maximum="1" Value="{Binding BusyIndicator}" Height="6" Margin="0,10,0,0" Foreground="{StaticResource AppBackground}" Background="#22FFFFFF" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Base64 Tools">
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="4*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Margin="0,0,10,0">
+                        <TextBlock Text="Bild zu Base64" FontWeight="SemiBold" />
+                        <Border x:Name="Base64DropZone" AllowDrop="True" BorderBrush="#55FFFFFF" BorderThickness="2" CornerRadius="14" Background="#11FFFFFF" Padding="20"
+                                Drop="Base64DropZone_Drop" DragEnter="Base64DropZone_DragEnter" DragLeave="Base64DropZone_DragLeave">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </Border.RenderTransform>
+                            <StackPanel>
+                                <TextBlock Text="Datei hier ablegen oder wählen" FontSize="16" FontWeight="SemiBold" />
+                                <TextBlock Text="Aktuelle Datei: {Binding Base64SourceFile}" Foreground="#CCFFFFFF" Margin="0,6,0,0" />
+                                <Button Content="Datei wählen" Click="PickBase64File_Click" Width="140" Margin="0,6,0,0" />
+                                <ComboBox ItemsSource="{Binding SupportedFormats}" SelectedItem="{Binding Base64Format}" Width="140" Margin="0,6,0,0" />
+                                <Button Content="Base64 erzeugen" Click="GenerateBase64_Click" Width="140" Margin="0,8,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="Base64 zu Bild" FontWeight="SemiBold" Margin="0,12,0,0" />
+                        <ComboBox ItemsSource="{Binding SupportedFormats}" SelectedItem="{Binding DecodeFormat}" Width="140" />
+                        <TextBox Text="{Binding Base64Input}" AcceptsReturn="True" Height="160" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Background="#0EFFFFFF" Foreground="White" BorderBrush="#22FFFFFF" />
+                        <Button Content="Base64 als Bild speichern" Click="DecodeBase64_Click" Width="190" />
+                        <TextBlock Text="{Binding DecodeStatus}" Foreground="#CCFFFFFF" />
+                    </StackPanel>
+
+                    <Border Grid.Column="1" CornerRadius="12" Padding="12" Background="#12FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Live-Vorschau" FontWeight="SemiBold" />
+                            <Border Height="360" Background="#08FFFFFF" CornerRadius="10" BorderBrush="#22FFFFFF" BorderThickness="1" Margin="0,8,0,0">
+                                <Image Source="{Binding PreviewSource}" Stretch="Uniform" />
+                            </Border>
+                            <TextBlock Text="Format: {Binding Base64Format}" Foreground="#CCFFFFFF" />
+                            <TextBlock Text="Datei: {Binding Base64SourceFile}" Foreground="#CCFFFFFF" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

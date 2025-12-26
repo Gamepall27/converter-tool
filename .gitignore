@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.csproj.user
+*.db
+*.opendb
+*.VC.db
+*.vscode/
+*.DS_Store
