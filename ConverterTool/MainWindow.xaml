@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
         Title="DIAL Image Converter"
         Height="720"
         Width="1100"
@@ -27,12 +28,6 @@
 
         <DropShadowEffect x:Key="CardShadow" Color="#000000" BlurRadius="18" ShadowDepth="4" Opacity="0.55"/>
     </Window.Resources>
-
-    <Window.Triggers>
-        <EventTrigger RoutedEvent="Loaded">
-            <BeginStoryboard Storyboard="{StaticResource GradientShift}"/>
-        </EventTrigger>
-    </Window.Triggers>
 
     <Grid Background="{StaticResource AnimatedGradient}" Margin="0">
         <Grid.RowDefinitions>

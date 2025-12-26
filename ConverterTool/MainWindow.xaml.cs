@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
+using System.Windows.Media;
 using ConverterTool.Models;
 using ConverterTool.Services;
 using Microsoft.Win32;
@@ -64,6 +66,19 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
         InitializeComponent();
         DataContext = this;
+    }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (FindResource("AnimatedGradient") is LinearGradientBrush brush &&
+            FindResource("GradientShift") is Storyboard storyboard)
+        {
+            NameScope.SetNameScope(this, new NameScope());
+            RegisterName("StartStop", brush.GradientStops[0]);
+            RegisterName("MidStop", brush.GradientStops[1]);
+            RegisterName("EndStop", brush.GradientStops[2]);
+            storyboard.Begin(this, true);
+        }
     }
 
     private async void DropZone_Drop(object sender, DragEventArgs e)
